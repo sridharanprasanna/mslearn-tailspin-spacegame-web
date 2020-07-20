@@ -1,0 +1,70 @@
+warning: LF will be replaced by CRLF in azure-pipelines.yml.
+The file will have its original line endings in your working directory
+[1mdiff --git a/azure-pipelines.yml b/azure-pipelines.yml[m
+[1mindex e7019a0..65a0c84 100644[m
+[1m--- a/azure-pipelines.yml[m
+[1m+++ b/azure-pipelines.yml[m
+[36m@@ -4,24 +4,25 @@[m [mtrigger:[m
+ pool:[m
+   vmImage: 'ubuntu-18.04'[m
+   demands:[m
+[31m-  - npm[m
+[32m+[m[32m    - npm[m
+ [m
+ variables:[m
+   buildConfiguration: 'Release'[m
+[32m+[m[32m  wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'[m
+[32m+[m[32m  dotnetSdkVersion: '3.1.300'[m
+ [m
+ steps:[m
+ - task: UseDotNet@2[m
+[31m-  displayName: 'Use .NET Core SDK 3.1.300'[m
+[32m+[m[32m  displayName: 'Use .NET Core SDK $(dotnetSdkVersion)'[m
+   inputs:[m
+[31m-    packageType: sdk[m
+[31m-    version: 3.1.300[m
+[32m+[m[32m    version: '$(dotnetSdkVersion)'[m
+ [m
+ - task: Npm@1[m
+   displayName: 'Run npm install'[m
+   inputs:[m
+     verbose: false[m
+ [m
+[31m-- script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'[m
+[32m+[m[32m- script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'[m
+   displayName: 'Compile Sass assets'[m
+ [m
+ - task: gulp@1[m
+[36m@@ -29,7 +30,7 @@[m [msteps:[m
+ [m
+ - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'[m
+   displayName: 'Write build info'[m
+[31m-  workingDirectory: Tailspin.SpaceGame.Web/wwwroot[m
+[32m+[m[32m  workingDirectory: $(wwwrootDir)[m
+ [m
+ - task: DotNetCoreCLI@2[m
+   displayName: 'Restore project dependencies'[m
+[36m@@ -38,19 +39,19 @@[m [msteps:[m
+     projects: '**/*.csproj'[m
+ [m
+ - task: DotNetCoreCLI@2[m
+[31m-  displayName: 'Build the project - Release - for prasanna - 2'[m
+[32m+[m[32m  displayName: 'Build the project - $(buildConfiguration)'[m
+   inputs:[m
+     command: 'build'[m
+[31m-    arguments: '--no-restore --configuration Release'[m
+[32m+[m[32m    arguments: '--no-restore --configuration $(buildConfiguration)'[m
+     projects: '**/*.csproj'[m
+ [m
+ - task: DotNetCoreCLI@2[m
+[31m-  displayName: 'Publish the project - Release'[m
+[32m+[m[32m  displayName: 'Publish the project - $(buildConfiguration)'[m
+   inputs:[m
+     command: 'publish'[m
+     projects: '**/*.csproj'[m
+     publishWebProjects: false[m
+[31m-    arguments: '--no-build --configuration Release --output $(Build.ArtifactStagingDirectory)/Release'[m
+[32m+[m[32m    arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'[m
+     zipAfterPublish: true[m
+ [m
+ - task: PublishBuildArtifacts@1[m
